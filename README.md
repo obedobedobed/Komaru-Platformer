@@ -9,3 +9,5 @@ Game made for practice with Monogame
 - Other thinks
 
 Thanks @codingwithsphere (Youtube) for Monogame tutorials
+
+If you have problems with input try switch keyboard layout to english
