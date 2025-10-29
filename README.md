@@ -1,4 +1,4 @@
-# Komaru-Platformer
+# Komaru Platformer
 Game made for practice with Monogame
 
 ### In this game i realised:
