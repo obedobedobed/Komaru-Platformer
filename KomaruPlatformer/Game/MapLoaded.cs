@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
@@ -38,9 +37,7 @@ public class MapLoader
             for (int x = 0; x < mapInStrings[0].Length; x++)
             {
                 map[y, x] = mapInStrings[y][x];
-                Console.Write(mapInStrings[y][x]);
             }
-            Console.WriteLine();
         }
 
         // Getting blocks textures

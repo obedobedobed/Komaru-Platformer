@@ -35,6 +35,7 @@ public class Player : Sprite
     private SoundEffectInstance jumpSoundInstance;
     private bool pressedRLastFrame = false;
     private Game1 game;
+    private float elapsedGameTime;
 
     public Rectangle rectangle
     {
@@ -48,8 +49,9 @@ public class Player : Sprite
         }
     }
 
-    public Player(Texture2D[] frames, Vector2 position, Vector2 scale, int speed, int jumpForce,
-    SoundEffect[] sounds, List<Block> blocksList, Game1 game) : base(frames, position, scale)
+    public Player(Texture2D[] frames, Vector2 position, Vector2 scale,
+    int speed, int jumpForce, SoundEffect[] sounds, List<Block> blocksList,
+    Game1 game) : base(frames, position, scale)
     {
         this.speed = speed;
         this.jumpForce = jumpForce;
@@ -73,10 +75,13 @@ public class Player : Sprite
 
     public void Update(GameTime gameTime)
     {
-        Gravity(gameTime);
-        Animation(gameTime);
-        GetInput(gameTime);
-        if (isJumping) Jump(gameTime);
+        elapsedGameTime =
+        (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        Gravity();
+        Animation();
+        GetInput();
+        if (isJumping) Jump();
 
         position = playerPos;
 
@@ -86,11 +91,11 @@ public class Player : Sprite
         }
     }
 
-    private void GetInput(GameTime gameTime)
+    private void GetInput()
     {
         direction = Direction.No;
 
-        KeyboardState keyboardState = Keyboard.GetState();
+        var keyboardState = Keyboard.GetState();
 
         // Checking for A or D pressed and changing direction
         if (keyboardState.IsKeyDown(Keys.D))
@@ -107,7 +112,7 @@ public class Player : Sprite
         // Moving if direction isnt NO
         if (direction != Direction.No)
         {
-            Move(gameTime);
+            Move();
         }
         else timeToStepSound = 0;
 
@@ -133,7 +138,7 @@ public class Player : Sprite
         }
     }
 
-    private void Move(GameTime gameTime)
+    private void Move()
     {
         // Checking for flip
         CheckAndFlip();
@@ -144,10 +149,10 @@ public class Player : Sprite
         switch (direction)
         {
             case Direction.Right:
-                toMove = (int)(speed * SPEED_MOD * gameTime.ElapsedGameTime.TotalSeconds);
+                toMove = (int)(speed * SPEED_MOD * elapsedGameTime);
                 break;
             case Direction.Left:
-                toMove = (int)(speed * SPEED_MOD * gameTime.ElapsedGameTime.TotalSeconds) * -1;
+                toMove = (int)(speed * SPEED_MOD * elapsedGameTime) * -1;
                 break;
         }
 
@@ -176,14 +181,14 @@ public class Player : Sprite
                 stepsSoundInstance.Pitch = Random.Shared.Next(8, 14) / 10;
                 timeToStepSound = STEP_SOUND_TIME;
             }
-            else timeToStepSound -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            else timeToStepSound -= (float)elapsedGameTime;
         }
 
         // Moving
         game.mapHorizontalOffset += toMove * -1;
     }
 
-    private void Animation(GameTime gameTime)
+    private void Animation()
     {
         if (!isGrounded)
         {
@@ -211,17 +216,17 @@ public class Player : Sprite
                         case 1: currentFrame = 0; break;
                     }
                 }
-                else timeToFrame -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                else timeToFrame -= elapsedGameTime;
             }
         }
 
         texture = frames[currentFrame];
     }
 
-    private void Gravity(GameTime gameTime)
+    private void Gravity()
     {
         // Calculating move
-        int toMove = (int)(GRAVITY * SPEED_MOD * gravityMod * gameTime.ElapsedGameTime.TotalSeconds);
+        int toMove = (int)(GRAVITY * SPEED_MOD * gravityMod * elapsedGameTime);
 
         // Checking for jumping
         if (isJumping) return;
@@ -252,10 +257,10 @@ public class Player : Sprite
         gravityMod += 0.03f;
     }
     
-    private void Jump(GameTime gameTime)
+    private void Jump()
     {
         // Calculating move
-        int toMove = (int)(jumpForce * SPEED_MOD * gameTime.ElapsedGameTime.TotalSeconds);
+        int toMove = (int)(jumpForce * SPEED_MOD * elapsedGameTime);
         jumpForce -= 0.3f;
 
         // Moving
@@ -268,7 +273,7 @@ public class Player : Sprite
             timeToJumpEnd = JUMP_TIME;
             jumpForce = originalJumpForce;
         }
-        else timeToJumpEnd -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+        else timeToJumpEnd -= elapsedGameTime;
     }
 
     private void CheckAndFlip()

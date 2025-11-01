@@ -41,7 +41,8 @@ public class Block : Sprite
         }
     }
 
-    public Block(Texture2D texture, Vector2 position, Vector2 scale) : base(texture, position, scale)
+    public Block(Texture2D texture, Vector2 position, Vector2 scale)
+    : base(texture, position, scale)
     {
         
     }
